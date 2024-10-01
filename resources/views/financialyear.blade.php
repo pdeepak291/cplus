@@ -18,8 +18,8 @@
                         <label for="country">Country</label>
                         <select class="form-control" id="country">
                             <option value="">Select Country</option>
-                            <option value="uk">UK</option>
-                            <option value="ireland">Ireland</option>
+                            <option value="GB">UK</option>
+                            <option value="IE">Ireland</option>
                         </select>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
             <div class="row">
                 <div class="col-12 p-2">
                     <div id="fyear"></div>
-                    <div id="holidays"></div>
+                    <ul id="holidays"></ul>
                 </div>
             </div>
         </div>
@@ -63,11 +63,11 @@
                 const country = $(this).val();
                 $("#year").empty();
                 $("#year").append('<option value="">Select Year</select>');
-                if(country==='ireland'){
+                if(country==='IE'){
                     years.forEach(function(year) {
                         $("#year").append('<option value="'+year+'">'+year+'</select>');
                     });
-                }else if(country==='uk'){
+                }else if(country==='GB'){
                     years.forEach(function(year) {
                         let nextYear = year + 1;
                         $("#year").append('<option value="'+year+'">'+year+'-'+nextYear.toString().slice(-2)+'</select>');
@@ -78,13 +78,33 @@
             $("#getData").click(function(){
                 const country =  $("#country").val();
                 const year =  $("#year").val();
-
+                $("#fyear").html('');
+                $("#holidays").html('');
                 $.ajax({
                     url: "{{ route('result') }}",
                     type: 'GET',
                     data: {country:country, year:year},
-                    success: function(response){ 
+                    success: function(response){
+                        
                         $("#fyear").html('<p><b>Financial Year Start : </b>'+response.startDate+'</p><p><b>Financial Year End : </b>'+response.endDate+'</p>');
+                        const holidays = response.holiDays;
+
+                        // Filter holidays to exclude weekends
+                        if (typeof holidays === 'object') {
+                            // Use Object.values to get an array of holiday objects
+                            const holidayArray = Object.values(holidays);
+
+                            // Filter holidays to exclude weekends
+                            holidayArray.forEach(holiday => {
+                                const holidayDate = new Date(holiday.date);
+                                if (holidayDate.getDay() !== 0 && holidayDate.getDay() !== 6) { // Exclude Sunday (0) and Saturday (6)
+                                    $("#holidays").append(`<li>${holiday.name} - ${holiday.date}</li>`);
+                                }
+                            });
+                        } else {
+                            console.error("Holidays is not an object:", holidays);
+                        }
+                    
                     },
                     error: function(xhr) {
                         console.error(xhr.responseText);
