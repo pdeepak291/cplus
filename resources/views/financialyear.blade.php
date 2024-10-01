@@ -42,8 +42,9 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-12">
-                    <div id="result"></div>
+                <div class="col-12 p-2">
+                    <div id="fyear"></div>
+                    <div id="holidays"></div>
                 </div>
             </div>
         </div>
@@ -59,7 +60,7 @@
             }
             
             $("#country").change(function(){
-                var country = $(this).val();
+                const country = $(this).val();
                 $("#year").empty();
                 $("#year").append('<option value="">Select Year</select>');
                 if(country==='ireland'){
@@ -74,6 +75,28 @@
                 }
             });
 
+            $("#getData").click(function(){
+                const country =  $("#country").val();
+                const year =  $("#year").val();
+
+                $.ajax({
+                    url: "{{ route('result') }}",
+                    type: 'GET',
+                    data: {country:country, year:year},
+                    success: function(response){ 
+                        $("#fyear").html('<p><b>Financial Year Start : </b>'+response.startDate+'</p><p><b>Financial Year End : </b>'+response.endDate+'</p>');
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        try {
+                            var jsonResponse = JSON.parse(xhr.responseText);
+                            console.log(jsonResponse);
+                        } catch (e) {
+                            console.error("Invalid JSON response:", e);
+                        }
+                    }
+                });
+            });
         })
     </script>
 </body>
