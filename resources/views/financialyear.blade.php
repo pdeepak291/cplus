@@ -17,6 +17,7 @@
                     <div class="form-group">
                         <label for="country">Country</label>
                         <select class="form-control" id="country">
+                            <option value="">Select Country</option>
                             <option value="uk">UK</option>
                             <option value="ireland">Ireland</option>
                         </select>
@@ -28,6 +29,7 @@
                         <div class="col-12 col-sm-6">
                             <div class="form-group">
                                 <select class="form-control" id="year">
+                                    <option value="">Select Year</option>
                                 </select>
                             </div>
                         </div>
@@ -50,7 +52,28 @@
     <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script>
         $(document).ready(function(){
+            const curyear = new Date().getFullYear();
+            const years = [];
+            for(let i=curyear-10;i<=curyear;i++){
+                years.push(i);
+            }
             
+            $("#country").change(function(){
+                var country = $(this).val();
+                $("#year").empty();
+                $("#year").append('<option value="">Select Year</select>');
+                if(country==='ireland'){
+                    years.forEach(function(year) {
+                        $("#year").append('<option value="'+year+'">'+year+'</select>');
+                    });
+                }else if(country==='uk'){
+                    years.forEach(function(year) {
+                        let nextYear = year + 1;
+                        $("#year").append('<option value="'+year+'">'+year+'-'+nextYear.toString().slice(-2)+'</select>');
+                    });
+                }
+            });
+
         })
     </script>
 </body>
