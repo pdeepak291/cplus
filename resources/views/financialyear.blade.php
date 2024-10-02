@@ -89,12 +89,9 @@
                         $("#fyear").html('<p><b>Financial Year Start : </b>'+response.startDate+'</p><p><b>Financial Year End : </b>'+response.endDate+'</p>');
                         const holidays = response.holiDays;
 
-                        // Filter holidays to exclude weekends
                         if (typeof holidays === 'object') {
-                            // Use Object.values to get an array of holiday objects
                             const holidayArray = Object.values(holidays);
 
-                            // Filter holidays to exclude weekends
                             holidayArray.forEach(holiday => {
                                 const holidayDate = new Date(holiday.date);
                                 if (holidayDate.getDay() !== 0 && holidayDate.getDay() !== 6) { // Exclude Sunday (0) and Saturday (6)
